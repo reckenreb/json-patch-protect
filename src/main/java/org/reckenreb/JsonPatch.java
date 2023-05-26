@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.reckenreb.util.JsonPatchUtil;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,13 +17,19 @@ import java.util.stream.Collectors;
 public class JsonPatch {
     private final List<JsonOperation> patchOperations;
 
+    private final JsonPatchUtil util = new JsonPatchUtil();
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @JsonCreator
     public JsonPatch(List<JsonOperation> patchOperations) {
         this.patchOperations = patchOperations;
     }
+
     public JsonNode applyTo(JsonNode node) {
-        JsonPatchUtil util = new JsonPatchUtil();
-        ObjectMapper objectMapper = new ObjectMapper();
+        return util.apply(objectMapper.createArrayNode().addAll((ArrayNode) objectMapper.valueToTree(getPatchOperations())), node);
+    }
+
+    public JsonNode applyTo(JsonNode node, Collection<PatchPermission> permissions) {
         return util.apply(objectMapper.createArrayNode().addAll((ArrayNode) objectMapper.valueToTree(getPatchOperations())), node);
     }
 
@@ -37,4 +44,5 @@ public class JsonPatch {
                 patchOperations +
                 ']';
     }
+
 }
