@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.reckenreb.JsonOperationType;
 import org.reckenreb.JsonPatch;
 import org.reckenreb.PatchPermission;
+import org.reckenreb.PatchRules;
+import org.reckenreb.exception.JsonPatchPermissionException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,12 +69,20 @@ public class JsonPatchTest {
             throw new RuntimeException(e);
         }
 
-        PatchPermission permission1 = PatchPermission.ofPath("/firstName").ofOperation(JsonOperationType.REPLACE).silentIgnore();
+
+        PatchPermission permission1 = PatchPermission.ofPath("/firstName").ofOperation(JsonOperationType.REPLACE);
         List<PatchPermission> permissions = new ArrayList<>();
         permissions.add(permission1);
         permissions.add(PatchPermission.ofPath("/lastName").permitAll());
 
-        JsonNode patched = patch.applyTo(mapper.valueToTree(p), permissions);
+
+
+        JsonNode patched = null;
+        try {
+            patched = patch.applyTo(mapper.valueToTree(p), PatchRules.ofPermissions(permissions).throwException(false));
+        } catch (JsonPatchPermissionException e) {
+            e.printStackTrace();
+        }
         Person pNew = mapper.convertValue(patched, Person.class);
         assertThat(pNew.firstName).isEqualTo("patched");
         assertThat(pNew.ssn).isEqualTo("0000100292");

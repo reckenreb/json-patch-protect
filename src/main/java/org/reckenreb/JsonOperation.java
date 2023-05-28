@@ -6,14 +6,13 @@ package org.reckenreb;
  */
 public class JsonOperation {
 
-    // TODO use enum and throw error in converter if not valid
-    private String op;
+    private JsonOperationType op;
 
     private String path;
 
     private String value;
 
-    public String getOp() {
+    public JsonOperationType getOp() {
         return op;
     }
 

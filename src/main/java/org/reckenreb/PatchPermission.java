@@ -9,8 +9,6 @@ public class PatchPermission {
 
     private final List<JsonOperationType> operations = new ArrayList<>();
 
-    private boolean throwException = true;
-
     public static PatchPermission ofPath(String path) {
         PatchPermission p = new PatchPermission();
         p.path = path;
@@ -35,11 +33,6 @@ public class PatchPermission {
         return this;
     }
 
-    public PatchPermission silentIgnore() {
-        throwException = false;
-        return this;
-    }
-
 
     public String getPath() {
         return path;
@@ -47,9 +40,5 @@ public class PatchPermission {
 
     public List<JsonOperationType> getOperations() {
         return operations;
-    }
-
-    public boolean isThrowException() {
-        return throwException;
     }
 }
