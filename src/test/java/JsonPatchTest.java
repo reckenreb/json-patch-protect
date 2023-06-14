@@ -13,6 +13,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
+@SuppressWarnings("all")
 public class JsonPatchTest {
 
     private static final String JSON_PATCH_TEST_1 = "[{\"op\":\"replace\",\"path\":\"/firstName\",\"value\":\"patched\"}, " +
@@ -22,8 +23,6 @@ public class JsonPatchTest {
     @Test
     @DisplayName("Basic test")
     void basicTest() {
-
-
         Person p = new Person();
         p.id = 1L;
         p.firstName = "John";
@@ -66,13 +65,10 @@ public class JsonPatchTest {
             throw new RuntimeException(e);
         }
 
-
-        PatchPermission permission1 = PatchPermission.ofPath("/firstName").ofOperation(JsonOperationType.REPLACE);
+        PatchPermission permission1 = PatchPermission.ofPath("/firstName").ofOperation(PatchOperationType.REPLACE);
         List<PatchPermission> permissions = new ArrayList<>();
         permissions.add(permission1);
         permissions.add(PatchPermission.ofPath("/lastName").permitAll());
-
-
 
         JsonPatchResult result = null;
         try {
@@ -86,13 +82,11 @@ public class JsonPatchTest {
         assertThat(pNew.lastName).isEqualTo("Doe");
         assertThat(pNew.id).isEqualTo(1L);
 
-        List<JsonOperation> permittedOperations = result.getPermittedOperations();
+        List<PatchOperation> permittedOperations = result.getPermittedOperations();
         assertThat(permittedOperations).hasSize(1);
-        assertThat(permittedOperations.get(0).getOp()).isEqualTo(JsonOperationType.REPLACE);
+        assertThat(permittedOperations.get(0).getOp()).isEqualTo(PatchOperationType.REPLACE);
         assertThat(permittedOperations.get(0).getPath()).isEqualTo("/ssn");
         assertThat(permittedOperations.get(0).getValue()).isEqualTo("1234");
-
-
     }
 
 

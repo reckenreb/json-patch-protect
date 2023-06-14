@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
  *
  */
 public class JsonPatch {
-    private final List<JsonOperation> patchOperations;
+    private final List<PatchOperation> patchOperations;
 
     private final JsonPatchUtil util = new JsonPatchUtil();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @JsonCreator
-    public JsonPatch(List<JsonOperation> patchOperations) {
+    public JsonPatch(List<PatchOperation> patchOperations) {
         this.patchOperations = patchOperations;
     }
 
@@ -30,17 +30,15 @@ public class JsonPatch {
     }
 
     public JsonPatchResult applyTo(JsonNode node, PatchRules rules) throws JsonPatchPermissionException {
-        List<JsonOperation> permittedOperations = new ArrayList<>();
-        Iterator<JsonOperation> operationIterator = getPatchOperations().iterator();
+        List<PatchOperation> permittedOperations = new ArrayList<>();
+        Iterator<PatchOperation> operationIterator = getPatchOperations().iterator();
         while (operationIterator.hasNext()) {
-            JsonOperation operation = operationIterator.next();
+            PatchOperation operation = operationIterator.next();
             Optional<PatchPermission> permitted = rules.getPermissions().stream().filter(permission -> permission.getPath().equals(operation.getPath()) && permission.getOperations().contains(operation.getOp())).findAny();
             if (permitted.isEmpty()) {
                 if (rules.isThrowException()) {
                     throw new JsonPatchPermissionException(operation.getOp().toValue(), operation.getPath());
                 } else {
-                    // TODO remove sysout
-                    System.out.println("Operation '" + operation.getOp().toValue() + "' not allowed for path '" + operation.getPath() + "'");
                     permittedOperations.add(operation);
                     operationIterator.remove();
                 }
@@ -49,13 +47,13 @@ public class JsonPatch {
         return JsonPatchResult.of(util.apply(objectMapper.createArrayNode().addAll((ArrayNode) objectMapper.valueToTree(getPatchOperations())), node), permittedOperations);
     }
 
-    public List<JsonOperation> getPatchOperations() {
+    public List<PatchOperation> getPatchOperations() {
         return patchOperations;
     }
 
     @Override
     public String toString() {
-        String patchOperations = getPatchOperations().stream().map(JsonOperation::toString).collect(Collectors.joining(", "));
+        String patchOperations = getPatchOperations().stream().map(PatchOperation::toString).collect(Collectors.joining(", "));
         return "JsonPatch [" +
                 patchOperations +
                 ']';

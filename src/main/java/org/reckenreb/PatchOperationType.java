@@ -3,7 +3,7 @@ package org.reckenreb;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum JsonOperationType {
+public enum PatchOperationType {
     ADD("add"),
     REMOVE("remove"),
     REPLACE("replace"),
@@ -11,14 +11,14 @@ public enum JsonOperationType {
     COPY("copy"),
     TEST("test");
 
-    private String value;
+    private final String value;
 
-    JsonOperationType(String value) {
+    PatchOperationType(String value) {
         this.value = value;
     }
 
     @JsonCreator
-    public static JsonOperationType forValue(String value) {
+    public static PatchOperationType forValue(String value) {
         if (value == null) {
             return null;
         }

@@ -4,15 +4,15 @@ package org.reckenreb;
  * Represents a single JsonPatch operation.
  *
  */
-public class JsonOperation {
-// TODO beides auf PatchOperation umbenennen
-    private JsonOperationType op;
+public class PatchOperation {
+
+    private PatchOperationType op;
 
     private String path;
 
     private String value;
 
-    public JsonOperationType getOp() {
+    public PatchOperationType getOp() {
         return op;
     }
 

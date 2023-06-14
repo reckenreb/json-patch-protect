@@ -8,9 +8,9 @@ public class JsonPatchResult {
 
     JsonNode result;
 
-    List<JsonOperation> permittedOperations;
+    List<PatchOperation> permittedOperations;
 
-    public static JsonPatchResult of(JsonNode result, List<JsonOperation> permittedOperations) {
+    public static JsonPatchResult of(JsonNode result, List<PatchOperation> permittedOperations) {
         JsonPatchResult r = new JsonPatchResult();
         r.result = result;
         r.permittedOperations = permittedOperations;
@@ -21,7 +21,7 @@ public class JsonPatchResult {
         return result;
     }
 
-    public List<JsonOperation> getPermittedOperations() {
+    public List<PatchOperation> getPermittedOperations() {
         return permittedOperations;
     }
 
