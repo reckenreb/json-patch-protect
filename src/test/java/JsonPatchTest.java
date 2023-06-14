@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.reckenreb.JsonOperationType;
-import org.reckenreb.JsonPatch;
-import org.reckenreb.PatchPermission;
-import org.reckenreb.PatchRules;
+import org.reckenreb.*;
 import org.reckenreb.exception.JsonPatchPermissionException;
 
 import java.util.ArrayList;
@@ -18,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class JsonPatchTest {
 
-    private static final String JSON = "[{\"op\":\"replace\",\"path\":\"/firstName\",\"value\":\"patched\"}, " +
+    private static final String JSON_PATCH_TEST_1 = "[{\"op\":\"replace\",\"path\":\"/firstName\",\"value\":\"patched\"}, " +
             "{\"op\":\"replace\",\"path\":\"/ssn\",\"value\":\"1234\"}]";
 
 
@@ -36,7 +33,7 @@ public class JsonPatchTest {
         ObjectMapper mapper = new ObjectMapper();
         JsonPatch patch;
         try {
-            patch = mapper.readValue(JSON, JsonPatch.class);
+            patch = mapper.readValue(JSON_PATCH_TEST_1, JsonPatch.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -53,7 +50,7 @@ public class JsonPatchTest {
     @Test
     @DisplayName("ssn path permitted")
     void ssnPermittedTest() {
-        String json = JSON;
+        String json = JSON_PATCH_TEST_1;
 
         Person p = new Person();
         p.id = 1L;
@@ -64,7 +61,7 @@ public class JsonPatchTest {
         ObjectMapper mapper = new ObjectMapper();
         JsonPatch patch;
         try {
-            patch = mapper.readValue(JSON, JsonPatch.class);
+            patch = mapper.readValue(JSON_PATCH_TEST_1, JsonPatch.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -77,17 +74,24 @@ public class JsonPatchTest {
 
 
 
-        JsonNode patched = null;
+        JsonPatchResult result = null;
         try {
-            patched = patch.applyTo(mapper.valueToTree(p), PatchRules.ofPermissions(permissions).throwException(false));
+            result = patch.applyTo(mapper.valueToTree(p), PatchRules.ofPermissions(permissions).throwException(false));
         } catch (JsonPatchPermissionException e) {
             e.printStackTrace();
         }
-        Person pNew = mapper.convertValue(patched, Person.class);
+        Person pNew = mapper.convertValue(result.getResult(), Person.class);
         assertThat(pNew.firstName).isEqualTo("patched");
         assertThat(pNew.ssn).isEqualTo("0000100292");
         assertThat(pNew.lastName).isEqualTo("Doe");
         assertThat(pNew.id).isEqualTo(1L);
+
+        List<JsonOperation> permittedOperations = result.getPermittedOperations();
+        assertThat(permittedOperations).hasSize(1);
+        assertThat(permittedOperations.get(0).getOp()).isEqualTo(JsonOperationType.REPLACE);
+        assertThat(permittedOperations.get(0).getPath()).isEqualTo("/ssn");
+        assertThat(permittedOperations.get(0).getValue()).isEqualTo("1234");
+
 
     }
 

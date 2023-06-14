@@ -5,7 +5,7 @@ package org.reckenreb;
  *
  */
 public class JsonOperation {
-
+// TODO beides auf PatchOperation umbenennen
     private JsonOperationType op;
 
     private String path;

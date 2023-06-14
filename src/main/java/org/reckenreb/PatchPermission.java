@@ -1,13 +1,15 @@
 package org.reckenreb;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class PatchPermission {
 
     private String path;
 
-    private final List<JsonOperationType> operations = new ArrayList<>();
+    private final Set<JsonOperationType> operations = new HashSet<>();
 
     public static PatchPermission ofPath(String path) {
         PatchPermission p = new PatchPermission();
@@ -16,7 +18,6 @@ public class PatchPermission {
     }
 
     public PatchPermission ofOperation(JsonOperationType op) {
-        this.operations.clear();
         this.operations.add(op);
         return this;
     }
@@ -38,7 +39,7 @@ public class PatchPermission {
         return path;
     }
 
-    public List<JsonOperationType> getOperations() {
+    public Set<JsonOperationType> getOperations() {
         return operations;
     }
 }
