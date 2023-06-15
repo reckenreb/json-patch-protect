@@ -4,16 +4,15 @@ package org.reckenreb;
  * Represents a single JsonPatch operation.
  *
  */
-public class JsonOperation {
+public class PatchOperation {
 
-    // TODO use enum and throw error in converter if not valid
-    private String op;
+    private PatchOperationType op;
 
     private String path;
 
     private String value;
 
-    public String getOp() {
+    public PatchOperationType getOp() {
         return op;
     }
 
