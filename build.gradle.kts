@@ -1,9 +1,9 @@
 plugins {
-    id("java")
+    id("java-library")
 }
 
 group = "org.reckenreb"
-version = "1.0-SNAPSHOT"
+version = "0.8.0"
 
 repositories {
     mavenCentral()

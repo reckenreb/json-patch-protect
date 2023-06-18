@@ -1,2 +1,2 @@
-rootProject.name = "json-patch"
+rootProject.name = "json-patch-protect"
 
