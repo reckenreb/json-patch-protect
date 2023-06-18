@@ -10,7 +10,7 @@ public class PatchOperation {
 
     private String path;
 
-    private String value;
+    private Object value;
 
     public PatchOperationType getOp() {
         return op;
@@ -20,7 +20,7 @@ public class PatchOperation {
         return path;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 

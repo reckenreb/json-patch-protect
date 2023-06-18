@@ -19,6 +19,7 @@ package org.reckenreb.util;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.reckenreb.exception.TestValidationException;
 
 /**
  * A simple (one class) implementation of 
@@ -361,7 +362,7 @@ public class JsonPatchUtil
         
         if (!node.equals(value))
         {
-            throw new IllegalArgumentException("The value does not equal path node");
+            throw new TestValidationException("Value [" + value + "] does not equal value at path " + path + " [" + node + "]");
         }
         
         return doc;
